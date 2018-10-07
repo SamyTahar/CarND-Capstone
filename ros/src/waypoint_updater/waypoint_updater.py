@@ -32,12 +32,23 @@ class WaypointUpdater(object):
         self.final_waypoints_pub = rospy.Publisher('final_waypoints', Lane, queue_size=1)
 
         # TODO: Add other member variables you need below
+        self.pose = None
 
-        rospy.spin()
+        self.loop()
+
+
+    def loop(self):
+        rate = rospy.Rate(50)
+        while not rospy.is_shutdown():
+            if self.pose:
+                #rospy.loginfo("self pose exit")
+                #for debug purpose display value X and Y from pose publisher by using the pose_cb Callback function
+                rospy.loginfo("pose_cb message: x=%.2f,y=%.2f ", self.pose.pose.position.x,self.pose.pose.position.y)
+                rate.sleep()
 
     def pose_cb(self, msg):
         # TODO: Implement
-        pass
+        self.pose = msg
 
     def waypoints_cb(self, waypoints):
         # TODO: Implement
