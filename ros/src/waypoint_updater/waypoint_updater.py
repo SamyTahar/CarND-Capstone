@@ -50,33 +50,6 @@ class WaypointUpdater(object):
     def loop(self):
         rate = rospy.Rate(10)
         while not rospy.is_shutdown():
-
-<<<<<<< HEAD
-        self.final_waypoints_pub = rospy.Publisher('final_waypoints', Lane, queue_size=1)
-
-        # TODO: Add other member variables you need below
-        self.pose = None
-
-        self.loop()
-
-
-    def loop(self):
-        rate = rospy.Rate(50)
-        while not rospy.is_shutdown():
-            if self.pose:
-                #rospy.loginfo("self pose exit")
-                #for debug purpose display value X and Y from pose publisher by using the pose_cb Callback function
-                rospy.loginfo("pose_cb message: x=%.2f,y=%.2f ", self.pose.pose.position.x,self.pose.pose.position.y)
-                rate.sleep()
-
-    def pose_cb(self, msg):
-        # TODO: Implement
-        self.pose = msg
-
-    def waypoints_cb(self, waypoints):
-        # TODO: Implement
-        pass
-=======
             if self.pose and self.base_waypoints:
                 #closest_waypoint_idx = self.get_closest_waypoint_idx()
                 #rospy.loginfo("type waypoint_tree: %s", closest_waypoint_idx)
@@ -188,7 +161,7 @@ class WaypointUpdater(object):
     def pose_cb(self, msg):
         # use the msg from the /current_pose subscriber
         self.pose = msg
->>>>>>> classifier
+
 
     def traffic_cb(self, msg):
         # TODO: Callback for /traffic_waypoint message. Implement
