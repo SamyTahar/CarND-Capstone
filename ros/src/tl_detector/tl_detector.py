@@ -13,7 +13,7 @@ import yaml
 from scipy.spatial import KDTree
 import numpy as np
 
-STATE_COUNT_THRESHOLD = 3
+STATE_COUNT_THRESHOLD = 2
 
 class TLDetector(object):
     def __init__(self):
@@ -42,11 +42,12 @@ class TLDetector(object):
 
         config_string = rospy.get_param("/traffic_light_config")
         self.config = yaml.load(config_string)
+        self.is_sim = self.config["is_site"]
 
         self.upcoming_red_light_pub = rospy.Publisher('/traffic_waypoint', Int32, queue_size=1)
 
         self.bridge = CvBridge()
-        self.light_classifier = TLClassifier()
+        self.light_classifier = TLClassifier(self.is_sim)
         self.listener = tf.TransformListener()
 
         self.state = TrafficLight.UNKNOWN
@@ -86,7 +87,7 @@ class TLDetector(object):
             self.state = state
         elif self.state_count >= STATE_COUNT_THRESHOLD:
             self.last_state = self.state
-
+            rospy.logerr('current_light_state: %s', state)
             if state == 0 :
                 rospy.logerr('state red yes: %s', state)
                 line_wp_idx = line_wp_idx
@@ -147,20 +148,6 @@ class TLDetector(object):
             #rospy.loginfo("type waypoint_tree: %s", self.waypoint_tree.query([x,y],1)[1])
             closest_idx = self.waypoint_tree.query([x,y],1)[1]
 
-            #Check if closest is ahead or behind vehicle
-            #closest_coord = self.waypoints_2d[closest_idx]
-            #prev_coord = self.waypoints_2d[closest_idx -1]
-
-            #Equation for hyperplane through closest_coords
-            #cl_vect = np.array(closest_coord)
-            #prev_vect = np.array(prev_coord)
-            #pos_vect = np.array([x,y])
-
-            #val = np.dot(cl_vect - prev_vect, pos_vect - cl_vect)
-
-            #if val > 0:
-            #    closest_idx = (closest_idx + 1) % len(self.waypoints_2d)
-
         return closest_idx
 
     def get_light_state(self, light):
@@ -173,17 +160,17 @@ class TLDetector(object):
             int: ID of traffic light color (specified in styx_msgs/TrafficLight)
 
         """
-        rospy.loginfo('light state: %s',light.state )
+        #rospy.loginfo('light state: %s',light.state )
 
-        return light.state
-        # if(not self.has_image):
-        #     self.prev_light_loc = None
-        #     return False
-        #
-        # cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
-        #
-        # #Get classification
-        # return self.light_classifier.get_classification(cv_image)
+        #return light.state
+        if(not self.has_image):
+            self.prev_light_loc = None
+            return False
+
+        cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
+
+        #Get classification
+        return self.light_classifier.get_classification(cv_image)
 
     def process_traffic_lights(self):
         """Finds closest visible traffic light, if one exists, and determines its

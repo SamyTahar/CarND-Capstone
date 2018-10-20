@@ -103,8 +103,8 @@ class WaypointUpdater(object):
         closest_idx = self.get_closest_waypoint_idx()
         farhest_idx = closest_idx + LOOKAHEAD_WPS
 
-        rospy.logerr('farhest_idx : %s',farhest_idx)
-        rospy.logerr('self.stopline_wp_idx : %s',self.stopline_wp_idx)
+        #rospy.logerr('farhest_idx : %s',farhest_idx)
+        #rospy.logerr('self.stopline_wp_idx : %s',self.stopline_wp_idx)
         #base_lane_wp = self.base_waypoints.waypoints[closest_idx:farhest_idx]
         base_lane_wp = self.base_waypoints.waypoints[closest_idx:farhest_idx]
         #self.final_waypoints_pub.publish(lane)
