@@ -13,7 +13,7 @@ import yaml
 from scipy.spatial import KDTree
 import numpy as np
 
-STATE_COUNT_THRESHOLD = 2
+STATE_COUNT_THRESHOLD = 0
 
 class TLDetector(object):
     def __init__(self):
@@ -147,6 +147,7 @@ class TLDetector(object):
         if self.waypoint_tree is not None:
             #rospy.loginfo("type waypoint_tree: %s", self.waypoint_tree.query([x,y],1)[1])
             closest_idx = self.waypoint_tree.query([x,y],1)[1]
+
 
         return closest_idx
 

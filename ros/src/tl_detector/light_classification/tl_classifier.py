@@ -48,21 +48,22 @@ class TLClassifier(object):
         #TODO implement light color prediction
 
         with self.graph.as_default():
-            img_expand = np.expand_dims(image, axis=0)
-            start = datetime.datetime.now()
+            img_expand = np.expand_dims(np.asarray(image, dtype=np.uint8), 0)
             (boxes, scores, classes, num_detections) = self.sess.run(
                 [self.boxes, self.scores, self.classes, self.num_detections],
                 feed_dict={self.image_tensor: img_expand})
-            end = datetime.datetime.now()
-            c = end - start
-            print(c.total_seconds())
 
         boxes = np.squeeze(boxes)
         scores = np.squeeze(scores)
         classes = np.squeeze(classes).astype(np.int32)
 
-        print('SCORES: ', scores[0])
-        print('CLASSES: ', classes[0])
+        #confidence_cutoff = .1
+
+        #boxes, scores, classes = self.filter_boxes(confidence_cutoff, boxes, scores, classes)
+
+        #if scores[0] is not None:
+        #    print('SCORES: ', scores[0])
+        #    print('CLASSES: ', classes[0])
 
         if scores[0] > self.threshold:
             if classes[0] == 1:
@@ -74,5 +75,21 @@ class TLClassifier(object):
             elif classes[0] == 3:
                 print('YELLOW')
                 return TrafficLight.YELLOW
+            elif classes[0] == 4:
+                print('UNKNOWN')
+                return TrafficLight.UNKNOWN
 
         return TrafficLight.UNKNOWN
+
+    def filter_boxes(self, min_score, boxes, scores, classes):
+        """Return boxes with a confidence >= `min_score`"""
+        n = len(classes)
+        idxs = []
+        for i in range(n):
+            if scores[i] >= min_score:
+                idxs.append(i)
+
+        filtered_boxes = boxes[idxs, ...]
+        filtered_scores = scores[idxs, ...]
+        filtered_classes = classes[idxs, ...]
+        return filtered_boxes, filtered_scores, filtered_classes
