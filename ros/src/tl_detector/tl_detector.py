@@ -55,8 +55,6 @@ class TLDetector(object):
         self.last_wp = -1
         self.state_count = 0
 
-
-        #rospy.spin()
         self.loop()
 
     def loop(self):
