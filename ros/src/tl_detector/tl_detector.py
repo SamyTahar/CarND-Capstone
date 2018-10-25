@@ -61,36 +61,8 @@ class TLDetector(object):
     def loop(self):
         rate = rospy.Rate(10)
         while not rospy.is_shutdown():
-
-            #light_wp, state = self.process_traffic_lights()
-            #rospy.loginfo('TrafficLight %s',TrafficLight.RED)
-            #rospy.loginfo('light_state: %s', light_wp)
             if self.pose and self.last_wp is not None and self.camera_image is not None and self.waypoints is not None:
-                start_time = rospy.get_time()
-                line_wp_idx, state = self.process_traffic_lights()
-
-                rospy.logerr('new state: %s', state)
-                rospy.logerr('prev state: %s', self.state)
-                if self.state != state:
-                    self.state_count = 0
-                    self.state = state
-                elif self.state_count >= STATE_COUNT_THRESHOLD:
-                    self.last_state = self.state
-                    #light_wp_idx = light_wp_idx if state == TrafficLight.RED else -1
-                    if state == 0:
-                        self.last_wp = line_wp_idx
-                    else:
-                        line_wp_idx = -1
-                        self.last_wp = -1
-                    publish_data = Int32(line_wp_idx)
-                    rospy.loginfo("publishing new stats %s", publish_data)
-                    self.upcoming_red_light_pub.publish(publish_data)
-                else:
-                    rospy.loginfo("publishing other state %s", Int32(self.last_wp))
-                    self.upcoming_red_light_pub.publish(Int32(self.last_wp))
-                self.state_count += 1
-                rospy.loginfo("Classification duration=%.3f", rospy.get_time() - start_time)
-            rate.sleep()
+                self.publish_light()
 
     def publish_light(self):
         #self.upcoming_red_light_pub.publish(Int32(light_seen))

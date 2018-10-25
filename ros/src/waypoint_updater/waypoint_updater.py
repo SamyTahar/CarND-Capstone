@@ -105,10 +105,10 @@ class WaypointUpdater(object):
         #rospy.logerr('farhest_idx : %s',farhest_idx)
         #rospy.logerr('self.stopline_wp_idx : %s',self.stopline_wp_idx)
         #base_lane_wp = self.base_waypoints.waypoints[closest_idx:farhest_idx]
-        base_lane_wp = self.base_waypoints.waypoints[closest_idx:farhest_idx]
+        base_lane_wp = self.base_waypoints.waypoints[closest_idx:farthest_idx]
         #self.final_waypoints_pub.publish(lane)
         #
-        if self.stopline_wp_idx == -1 or (self.stopline_wp_idx >= farhest_idx):
+        if self.stopline_wp_idx == -1 or (self.stopline_wp_idx >= farthest_idx):
             #rospy.logwarn('traffic light detected => Don\'t stop')
             lane.waypoints = base_lane_wp
              #self.final_waypoints_pub.publish(lane)
